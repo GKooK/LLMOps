@@ -109,6 +109,8 @@ reading_coach/
 
 ## 🚀 실행 방법
 
+> 📖 **상세 실행·시연·트러블슈팅은 [`RUNBOOK.md`](RUNBOOK.md) 참고** — 전체 Docker 라이브 시연 / 오프라인 노트북 / DVC·MLflow / 실배포 중 발생 이슈 해결책까지 정리되어 있습니다.
+
 ### 1. 환경 변수
 ```bash
 cp .env.example .env
