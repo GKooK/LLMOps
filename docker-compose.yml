@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   # 1) PostgreSQL — 책/세션/턴/회고문
