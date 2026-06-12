@@ -32,6 +32,7 @@ notebooks/.ipynb_checkpoints/
 notebooks/human_ratings.csv
 notebooks/human_ratings_template.csv
 
-# ───────── OS ─────────
+# ───────── OS / Office temp ─────────
 .DS_Store
 Thumbs.db
+~$*
