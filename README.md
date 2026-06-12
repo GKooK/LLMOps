@@ -47,7 +47,7 @@
 
 | # | 요구사항 | 구현 산출물 |
 |---|----------|-------------|
-| ① | 문제 정의 및 데이터 이해 | 보고서 v0.3 + `notebooks/01_data_understanding.ipynb` (EDA) |
+| ① | 문제 정의 및 데이터 이해 | `reading_coach_report.docx` + `notebooks/01_data_understanding.ipynb` (EDA) |
 | ② | Source Code Version Control | **Git** 저장소 + `.gitignore` + 의미 단위 커밋 이력 |
 | ③ | Data Version Control | **DVC** (`data/*.dvc`, 로컬 remote) + `data/README.md` + sha256 매니페스트 |
 | ④ | 데이터 전처리 / Feature Engineering | `src/data_prep.py` (중복제거·정규화·견고파서·응답 피처) → `books_clean.csv` |
