@@ -40,34 +40,68 @@
 
 ---
 
+## 🧪 MLOps 9대 요구사항 커버리지
+
+본 프로젝트는 *모델 성능 비교*가 아니라 **하나의 AI 서비스를 개발·운영하는 MLOps 전 과정**을 다룬다.
+(모델 **학습은 하지 않으며**, 품질 개선은 프롬프트·평가·실험관리·로깅으로 한다 — No-Training.)
+
+| # | 요구사항 | 구현 산출물 |
+|---|----------|-------------|
+| ① | 문제 정의 및 데이터 이해 | 보고서 v0.3 + `notebooks/01_data_understanding.ipynb` (EDA) |
+| ② | Source Code Version Control | **Git** 저장소 + `.gitignore` + 의미 단위 커밋 이력 |
+| ③ | Data Version Control | **DVC** (`data/*.dvc`, 로컬 remote) + `data/README.md` + sha256 매니페스트 |
+| ④ | 데이터 전처리 / Feature Engineering | `src/data_prep.py` (중복제거·정규화·견고파서·응답 피처) → `books_clean.csv` |
+| ⑤ | AutoML / 실험 관리 | **MLflow** (`02_*.ipynb`, `./mlruns`) — 모델×프롬프트 조합 탐색·추적 |
+| ⑥ | 모델 평가 및 성능 비교 | `02`(gpt-4o-mini vs gpt-4o) + `03`(4축 LLM-Judge + 사람보정 Spearman) |
+| ⑦ | XAI | `04_xai.ipynb` — 대리모델 + **SHAP**/계수/순열중요도로 '좋은 질문' 동인 해석 |
+| ⑧ | AI Endpoint / API 배포 | **FastAPI** (`/session/*`, `/ops/*`, Swagger) + **Docker Compose** |
+| ⑨ | Web UI | **Streamlit** 채팅 + 운영 종합 대시보드 |
+
+> 전체 파이프라인 재현 순서는 아래 [실행 방법 §5](#5-mlops-파이프라인-노트북-실행-순서) 참고.
+
+---
+
 ## 📂 디렉토리 구조
 
 ```
 reading_coach/
 ├── README.md
-├── requirements.txt
+├── requirements.txt            # 앱 런타임 의존성
+├── requirements-analysis.txt   # 노트북/MLOps 스택(dvc·mlflow·sklearn·shap)
 ├── docker-compose.yml
 ├── .env.example
+├── .gitignore                  # ① Git 버전 관리
+├── .dvc/ · data/*.dvc          # ③ DVC 데이터 버전 관리 메타
 ├── Dockerfile.backend / Dockerfile.frontend
 ├── book_db/
 │   ├── init.sql          # 4 tables: books / sessions / turns / reflections
 │   └── Dockerfile
 ├── configs/
-│   ├── prompts.yaml      # 3 coaching styles + reflection prompt
-│   └── model.yaml        # 모델·비용·메모리 설정
+│   ├── prompts.yaml      # 3 coaching styles + [그라운딩 규칙] + reflection
+│   └── model.yaml        # 모델·비용·메모리·judge·grounding 설정
 ├── data/
-│   └── books.csv         # 베스트셀러 20권 (제목/저자/요약)
+│   ├── README.md         # ③ DVC 사용법
+│   ├── books.csv         # 원천 메타데이터(DVC 추적)
+│   ├── books_clean.csv   # ④ 전처리 정제본(DVC 추적)
+│   ├── golden_set.json   # 평가 골든셋 30케이스(DVC 추적)
+│   └── data_registry.json# sha256 데이터 매니페스트
 ├── src/
-│   ├── main.py           # FastAPI: 세션 시작/턴/종료 + Ops
+│   ├── main.py           # ⑧ FastAPI: 세션 + Ops(overview/styles)
 │   ├── models.py         # Pydantic 스키마
 │   ├── database.py       # PostgreSQL CRUD (4 tables)
+│   ├── data_prep.py      # ④ 전처리·Feature Engineering·매니페스트
 │   ├── llm_engine.py     # LLM + Function Calling
 │   ├── memory.py         # 대화 메모리 압축
 │   ├── security.py       # PII + Crisis Detection
-│   └── dashboard.py      # Streamlit (사용자 + Ops 패널)
+│   └── dashboard.py      # ⑨ Streamlit (사용자 + 운영 종합 패널)
 ├── notebooks/
-│   ├── evaluation.ipynb  # LLM-as-a-Judge + 사람 보정(Spearman) 평가
-│   └── eval_summary.json # 노트북 산출물 (대시보드가 소비, 오프라인 샘플 동봉)
+│   ├── 01_data_understanding.ipynb     # ①④ EDA·전처리·FE
+│   ├── 02_model_experiment_mlflow.ipynb# ⑤⑥ 실험추적·모델비교
+│   ├── 03_evaluation_calibration.ipynb # ⑥ LLM-as-a-Judge + 사람보정
+│   ├── 04_xai.ipynb                    # ⑦ XAI(SHAP)
+│   └── *_summary.json                  # 노트북 산출물(대시보드/증빙)
+├── experiments/
+│   └── README.md         # ⑤ MLflow 실험 관리
 └── logs/                 # 자동 생성됨 (turns.csv)
 ```
 
@@ -87,7 +121,7 @@ docker compose up --build -d
 ```
 
 - DB가 healthcheck 통과 후 backend → frontend 순으로 부팅
-- 첫 부팅 시 `data/books.csv`가 자동으로 books 테이블에 적재됩니다
+- 첫 부팅 시 정제본 `data/books_clean.csv`(없으면 원천 `books.csv`를 견고 파서로)가 자동 적재됩니다
 
 ### 3. 접속
 - 사용자 UI (Streamlit): http://localhost:8501
@@ -100,14 +134,31 @@ docker compose up --build -d
 4. 자유롭게 대화 (3~10턴 권장)
 5. **"이 세션을 마치고 회고문 받기"** 클릭 → 자동 회고문
 
-### 5. 평가 노트북 실행
+### 5. MLOps 파이프라인 노트북 실행 순서
+
 ```bash
-pip install jupyter matplotlib pandas pyyaml
-jupyter nbconvert --execute notebooks/evaluation.ipynb --to html
+pip install -r requirements-analysis.txt   # dvc·mlflow·sklearn·shap·jupyter 등
+
+# (선택) DVC로 데이터 복원 — 다른 환경에서 clone 했을 때
+dvc pull
+
+# 전처리만 단독 실행하려면
+python -m src.data_prep                     # → data/books_clean.csv + 매니페스트
+
+# 노트북을 순서대로 실행 (모두 OPENAI_API_KEY 없이 '오프라인 모의'로 완주 가능)
+jupyter notebook
+#  01_data_understanding.ipynb      ①④ EDA·전처리·Feature Engineering
+#  02_model_experiment_mlflow.ipynb ⑤⑥ MLflow 실험추적 + 모델 비교
+#  03_evaluation_calibration.ipynb  ⑥  LLM-as-a-Judge + 사람보정(Spearman)
+#  04_xai.ipynb                     ⑦  SHAP로 '좋은 질문' 동인 해석
+
+mlflow ui --backend-store-uri ./mlruns      # ⑤ 실험 비교 UI (http://localhost:5000)
 ```
-- **라이브 모드:** `OPENAI_API_KEY`가 있고 백엔드가 떠 있으면 실제 응답을 생성·채점한다.
-- **오프라인 모드:** 키/백엔드가 없으면 자동으로 모의 데이터로 전환되어 채점·상관·집계·시각화·산출물 저장까지 **전체 파이프라인을 재현**한다.
-- 산출물: `notebooks/eval_summary.json`(대시보드 `/ops/overview`가 소비), `human_ratings_template.csv`(사람 평가 배포용).
+
+- **라이브 모드:** `OPENAI_API_KEY`가 있으면 실제 모델로 생성·채점한다.
+- **오프라인 모드:** 키가 없으면 모델별/스타일별 품질 프로파일을 반영한 모의 데이터로
+  채점·상관·실험추적·XAI·시각화·산출물 저장까지 **전 파이프라인을 재현**한다(과제 검증용).
+- 산출물(증빙): `eval_summary.json`(대시보드 `/ops/overview` 소비), `model_comparison.json`, `xai_summary.json`.
 
 ---
 

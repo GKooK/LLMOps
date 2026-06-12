@@ -25,8 +25,10 @@ mlartifacts/
 /dvcstore/
 
 # ───────── Notebook / eval outputs ─────────
+# 재현 가능한 그림은 제외(요약 JSON은 커밋)
 notebooks/*.html
-notebooks/eval_result.png
+notebooks/*.png
+notebooks/.ipynb_checkpoints/
 notebooks/human_ratings.csv
 notebooks/human_ratings_template.csv
 

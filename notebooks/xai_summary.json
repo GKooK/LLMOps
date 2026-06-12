@@ -1,0 +1,59 @@
+{
+  "surrogate_r2": {
+    "linear": 0.851,
+    "gbr": 0.858
+  },
+  "top_drivers": [
+    {
+      "feature": "resp_word_len",
+      "mean_abs_shap": 0.2642
+    },
+    {
+      "feature": "ends_with_question",
+      "mean_abs_shap": 0.2456
+    },
+    {
+      "feature": "user_overlap",
+      "mean_abs_shap": 0.2243
+    },
+    {
+      "feature": "second_person_refs",
+      "mean_abs_shap": 0.1966
+    },
+    {
+      "feature": "has_quote_mark",
+      "mean_abs_shap": 0.0109
+    },
+    {
+      "feature": "n_question_marks",
+      "mean_abs_shap": 0.0
+    }
+  ],
+  "linear_coef": [
+    {
+      "feature": "user_overlap",
+      "linear_coef": 4.311
+    },
+    {
+      "feature": "resp_word_len",
+      "linear_coef": -0.253
+    },
+    {
+      "feature": "has_quote_mark",
+      "linear_coef": 0.156
+    },
+    {
+      "feature": "second_person_refs",
+      "linear_coef": 0.116
+    },
+    {
+      "feature": "ends_with_question",
+      "linear_coef": 0.094
+    },
+    {
+      "feature": "n_question_marks",
+      "linear_coef": 0.0
+    }
+  ],
+  "interpretation": "사용자 발화에 그라운딩(user_overlap)되고 열린 질문(ends_with_question)일수록 Depth가 오르며, 사용자와 무관한 인용(has_quote_mark+낮은 overlap=환각)은 점수를 떨어뜨린다. → 프롬프트의 [그라운딩 규칙]과 정확히 일치하는 방향."
+}

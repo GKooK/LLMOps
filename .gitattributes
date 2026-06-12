@@ -1,0 +1,5 @@
+# 텍스트 파일 줄바꿈 정규화 (CRLF 경고 억제)
+* text=auto eol=lf
+*.png binary
+*.docx binary
+*.ipynb text eol=lf
