@@ -1,0 +1,22 @@
+{
+  "v1.0": {
+    "note": "01 노트북 산출: 정제본 + 골든셋",
+    "files": [
+      {
+        "path": "../data/books.csv",
+        "sha256": "c12e95f9305b5ac5f05485ea44630ba9708cef5c9c4088ce6bec00fbd149ba8a",
+        "bytes": 4762
+      },
+      {
+        "path": "../data/books_clean.csv",
+        "sha256": "fa91ed33a485f5a9b48d7f5d7fda0a83ac322a9065675b493a917a5d968dec15",
+        "bytes": 4991
+      },
+      {
+        "path": "../data/golden_set.json",
+        "sha256": "93ae5df61f71b7971cd1bcadf97c1c0173121c4c5c4a28fe998a9e4fe7acbc4f",
+        "bytes": 6607
+      }
+    ]
+  }
+}

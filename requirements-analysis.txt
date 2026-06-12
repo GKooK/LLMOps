@@ -1,0 +1,11 @@
+# 분석/MLOps 스택 — 노트북(01~04)·실험 추적·데이터 버전 관리 전용.
+# 앱 런타임(requirements.txt)과 분리하여 백엔드 이미지를 가볍게 유지한다.
+-r requirements.txt
+
+jupyter==1.1.1
+nbformat==5.10.4
+matplotlib==3.9.2
+scikit-learn==1.9.0   # 실험 비교 · XAI 대리모델
+shap==0.51.0          # XAI(SHAP) 결과 해석
+mlflow==3.13.0        # 실험 추적/모델 비교 레지스트리
+dvc==3.67.1           # 데이터 버전 관리

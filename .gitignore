@@ -18,11 +18,11 @@ logs/
 mlruns/
 mlartifacts/
 
-# ───────── DVC (cache is local, not committed) ─────────
-/data/.gitignore
+# ───────── DVC (cache + local remote are not committed; .dvc meta IS) ─────────
 .dvc/cache/
 .dvc/tmp/
 .dvc/config.local
+/dvcstore/
 
 # ───────── Notebook / eval outputs ─────────
 notebooks/*.html

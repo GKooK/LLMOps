@@ -52,11 +52,21 @@ def init_data_if_empty(csv_path: str = "data/books.csv") -> None:
             print(f"✅ books 데이터 이미 적재되어 있음")
             return
 
-        if not os.path.exists(csv_path):
+        # 정제본(data/books_clean.csv)이 있으면 우선 사용(중복 제거·정규화 완료).
+        # 없으면 원천 books.csv를 견고 파서로 적재 — 원천 파일은 summary 내
+        # 비인용 콤마가 있어 표준 pd.read_csv가 깨지므로 robust 로더를 쓴다.
+        from src.data_prep import read_books_robust
+        clean_path = "data/books_clean.csv"
+        if os.path.exists(clean_path):
+            df = pd.read_csv(clean_path)
+            print(f"📘 정제본 사용: {clean_path}")
+        elif os.path.exists(csv_path):
+            df = read_books_robust(csv_path)
+            print(f"📘 원천 견고 파싱: {csv_path}")
+        else:
             print(f"⚠️ {csv_path} 파일이 없습니다.")
             return
-
-        df = pd.read_csv(csv_path).where(lambda x: x.notnull(), None)
+        df = df.where(lambda x: x.notnull(), None)
         for _, row in df.iterrows():
             cur.execute(
                 """INSERT INTO books (rank, title, author, yes24_url, image_url, summary)
