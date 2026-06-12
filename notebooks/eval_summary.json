@@ -1,0 +1,44 @@
+{
+  "judge_model": "gpt-4o-mini",
+  "mode": "offline_mock",
+  "n_golden_cases": 30,
+  "by_style": [
+    {
+      "style": "v1",
+      "depth_score": 2.82,
+      "groundedness": 2.6,
+      "fabrication_rate": 0.3,
+      "avg_latency_ms": 1639.0,
+      "avg_cost_usd": 0.001104
+    },
+    {
+      "style": "v2",
+      "depth_score": 4.3,
+      "groundedness": 4.47,
+      "fabrication_rate": 0.0,
+      "avg_latency_ms": 2093.0,
+      "avg_cost_usd": 0.001094
+    },
+    {
+      "style": "v3",
+      "depth_score": 3.99,
+      "groundedness": 4.17,
+      "fabrication_rate": 0.0,
+      "avg_latency_ms": 2533.0,
+      "avg_cost_usd": 0.001072
+    }
+  ],
+  "calibration": {
+    "human_source": "모의 사람 채점 (오프라인 데모)",
+    "n_calibration": 30,
+    "spearman": {
+      "openness": 0.755,
+      "groundedness": 0.947,
+      "specificity": 0.878,
+      "provocativeness": 0.783,
+      "depth_score": 0.89
+    },
+    "min_correlation_threshold": 0.7,
+    "passed": true
+  }
+}

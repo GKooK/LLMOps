@@ -1,0 +1,32 @@
+openai:
+  model_name: "gpt-4o-mini"
+  temperature: 0.7
+  max_tokens: 600
+
+# LLM-as-a-Judge는 생성 모델과 분리(편향 방지)
+judge:
+  model_name: "gpt-4o-mini"   # 실제 운영에서는 gpt-4o 등 상위 모델 권장
+  temperature: 0.0
+  # 평가 신뢰도 게이트: 골든셋에 대한 사람 점수와 Judge 점수의
+  # Spearman 상관이 이 값 미만이면 Judge 프롬프트를 재튜닝한다.
+  min_human_correlation: 0.70
+  # 사람 평가와 상관을 확인할 최소 골든셋 규모(피드백 반영: 30~50)
+  calibration_min_cases: 30
+
+# 그라운딩 범위 — 환각/저작권 방지 정책 (코드가 아닌 설계 의사결정의 단일 출처)
+grounding:
+  # MVP는 책 본문 전문 RAG를 사용하지 않는다(저작권 + 환각 위험).
+  use_fulltext_rag: false
+  # 코치가 닻을 내릴 수 있는 정보원: 메타데이터 요약 + 사용자 발화뿐.
+  allowed_sources: ["book_metadata_summary", "user_utterance"]
+
+memory:
+  # 최근 K턴은 원문 유지, 그 이전은 1회 요약본으로 압축
+  recent_keep_turns: 4
+  # 메시지가 keep_turns × 2 를 초과하면 압축 트리거
+  trigger_compaction_at: 10
+
+pricing:
+  # gpt-4o-mini 2024-07 기준 (단위: $ per 1M tokens)
+  input_per_million: 0.15
+  output_per_million: 0.60

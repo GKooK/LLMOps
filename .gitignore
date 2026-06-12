@@ -1,0 +1,35 @@
+# ───────── Python ─────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ───────── Secrets / env ─────────
+.env
+*.key
+
+# ───────── Logs / runtime ─────────
+logs/
+*.log
+
+# ───────── MLflow experiment store ─────────
+mlruns/
+mlartifacts/
+
+# ───────── DVC (cache is local, not committed) ─────────
+/data/.gitignore
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# ───────── Notebook / eval outputs ─────────
+notebooks/*.html
+notebooks/eval_result.png
+notebooks/human_ratings.csv
+notebooks/human_ratings_template.csv
+
+# ───────── OS ─────────
+.DS_Store
+Thumbs.db
